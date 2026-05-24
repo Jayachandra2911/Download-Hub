@@ -322,20 +322,20 @@ atOptions={
 
 <script>
 
-const ADMIN_PASSWORD=
-"jaya@2911"
+const ADMIN_PASSWORD="jaya@2911";
 
 const container=
 document.getElementById(
 "container"
-)
+);
 
 let files=
 JSON.parse(
 localStorage.getItem(
 "files"
 )
-)||[]
+)||[];
+
 
 
 function convertDrive(url){
@@ -343,28 +343,49 @@ function convertDrive(url){
 let id=
 url.match(
 /[-\w]{25,}/
-)
+);
 
 if(id){
 
-return `https://drive.google.com/uc?export=download&id=${id[0]}`
+return `https://drive.google.com/uc?export=download&id=${id[0]}`;
 
 }
 
-return url
+return url;
 
 }
+
+
+
+function convertImage(url){
+
+let id=
+url.match(
+/[-\w]{25,}/
+);
+
+if(id){
+
+return `https://drive.google.com/thumbnail?id=${id[0]}&sz=w1000`;
+
+}
+
+return url;
+
+}
+
 
 
 
 function render(){
 
-let html=""
+let html="";
 
 const isAdmin=
+
 localStorage.getItem(
 "admin"
-)==="true"
+)==="true";
 
 
 files.forEach(
@@ -374,27 +395,44 @@ html+=`
 
 <div class="card">
 
-<img src="${file.image}">
+<img
+src="${file.image || 'https://picsum.photos/500'}"
+
+onerror="
+this.src='https://picsum.photos/500'
+"
+>
 
 <div class="category">
-${file.category}
+
+${file.category || "Unknown"}
+
 </div>
 
 <div class="title">
-${file.name}
+
+${file.name || "Untitled"}
+
 </div>
 
 <div class="desc">
-${file.desc}
+
+${file.desc || "No description"}
+
 </div>
 
-<a href="${file.link}" target="_blank">
+<a
+href="${file.link}"
+target="_blank">
 
 <button class="btn">
+
 Download
+
 </button>
 
 </a>
+
 
 ${isAdmin ?
 
@@ -408,9 +446,11 @@ Delete
 
 :""}
 
+
 </div>
 
-`
+`;
+
 
 if((index+1)%6===0){
 
@@ -418,45 +458,147 @@ html+=`
 
 <div class="ad-box">
 
-Native Ad
+Advertisement
 
 </div>
 
-`
+`;
 
 }
 
-})
+});
 
-container.innerHTML=html
+
+container.innerHTML=html;
 
 }
 
 
-render()
+
+render();
+
 
 
 
 function addFile(){
 
-let obj={
 
-name:name.value,
-desc:desc.value,
-category:category.value,
-image:image.value,
-link:convertDrive(link.value)
+const title=
+
+document
+.getElementById(
+"name"
+)
+.value
+.trim();
+
+
+const description=
+
+document
+.getElementById(
+"desc"
+)
+.value
+.trim();
+
+
+const fileCategory=
+
+document
+.getElementById(
+"category"
+)
+.value
+.trim();
+
+
+const thumbnail=
+
+document
+.getElementById(
+"image"
+)
+.value
+.trim();
+
+
+const fileLink=
+
+document
+.getElementById(
+"link"
+)
+.value
+.trim();
+
+
+
+if(
+
+!title ||
+
+!description ||
+
+!fileCategory ||
+
+!fileLink
+
+){
+
+alert(
+"Please fill all fields"
+);
+
+return;
 
 }
 
-files.push(obj)
 
-localStorage.setItem(
-"files",
-JSON.stringify(files)
+
+let obj={
+
+name:title,
+
+desc:description,
+
+category:fileCategory,
+
+image:
+convertImage(
+thumbnail
+),
+
+link:
+convertDrive(
+fileLink
 )
 
-render()
+};
+
+
+
+files.push(
+obj
+);
+
+
+
+localStorage.setItem(
+
+"files",
+
+JSON.stringify(
+files
+)
+
+);
+
+
+
+render();
+
+
 
 document
 .querySelectorAll(
@@ -464,55 +606,72 @@ document
 )
 .forEach(
 x=>x.value=""
-)
+);
+
 
 }
+
+
 
 
 
 function deleteFile(index){
 
-if(confirm(
+if(
+
+confirm(
 "Delete file?"
-)){
+)
+
+){
 
 files.splice(
 index,
 1
-)
+);
 
 localStorage.setItem(
+
 "files",
-JSON.stringify(files)
+
+JSON.stringify(
+files
 )
 
-render()
+);
+
+render();
 
 }
 
 }
+
 
 
 
 function login(){
 
 if(
+
 adminPass.value
 ===ADMIN_PASSWORD
+
 ){
 
 localStorage.setItem(
 "admin",
 "true"
-)
+);
 
-showAdmin()
+showAdmin();
 
-}else{
+}
+
+else{
 
 alert(
 "Wrong password"
-)
+);
 
 }
 
@@ -523,12 +682,12 @@ alert(
 function showAdmin(){
 
 loginBox.style.display=
-"none"
+"none";
 
 adminPanel.style.display=
-"block"
+"block";
 
-render()
+render();
 
 }
 
@@ -538,21 +697,23 @@ function logout(){
 
 localStorage.removeItem(
 "admin"
-)
+);
 
-location.reload()
+location.reload();
 
 }
 
 
 
 if(
+
 localStorage.getItem(
 "admin"
 )==="true"
+
 ){
 
-showAdmin()
+showAdmin();
 
 }
 
@@ -561,8 +722,10 @@ showAdmin()
 function searchFiles(){
 
 let value=
+
 search.value
-.toLowerCase()
+.toLowerCase();
+
 
 document
 .querySelectorAll(
@@ -574,12 +737,19 @@ card.style.display=
 
 card.innerText
 .toLowerCase()
-.includes(value)
+.includes(
+value
+)
 
-?"block"
-:"none"
+?
 
-})
+"block"
+
+:
+
+"none";
+
+});
 
 }
 
