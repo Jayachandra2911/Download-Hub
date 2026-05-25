@@ -1,744 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Download Hub</title>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-background:#0f0f0f;
-color:#fff;
-padding:15px;
-padding-bottom:80px;
-}
-
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:15px;
-flex-wrap:wrap;
-margin-bottom:25px;
-}
-
-.logo{
-font-size:clamp(24px,4vw,34px);
-font-weight:bold;
-}
-
-.search{
-padding:12px;
-width:350px;
-max-width:100%;
-border:none;
-border-radius:12px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(260px,1fr));
-gap:18px;
-}
-
-.card{
-background:#1c1c1c;
-padding:15px;
-border-radius:20px;
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-5px);
-}
-
-.card img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:12px;
-}
-
-.category{
-display:inline-block;
-margin-top:10px;
-padding:6px 12px;
-border-radius:20px;
-background:#333;
-font-size:12px;
-}
-
-.title{
-font-size:22px;
-margin-top:10px;
-}
-
-.desc{
-margin:10px 0;
-color:#bbb;
-}
-
-.btn{
-padding:10px 15px;
-border:none;
-border-radius:10px;
-background:#00c853;
-color:white;
-cursor:pointer;
-margin-right:8px;
-margin-top:10px;
-}
-
-.deleteBtn{
-background:#d32f2f;
-}
-
-.admin{
-margin-top:40px;
-background:#1b1b1b;
-padding:20px;
-border-radius:20px;
-}
-
-.admin input,
-.admin textarea{
-width:100%;
-padding:12px;
-margin:10px 0;
-border:none;
-border-radius:10px;
-}
-
-.ad-box{
-background:#1b1b1b;
-padding:15px;
-margin:20px 0;
-border-radius:20px;
-display:flex;
-justify-content:center;
-overflow:hidden;
-}
-
-.mobileSticky{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-display:flex;
-justify-content:center;
-z-index:999;
-}
-
-@media(max-width:768px){
-
-.card img{
-height:150px;
-}
-
-.logo{
-width:100%;
-text-align:center;
-}
-
-.search{
-width:100%;
-}
-
-}
-
-</style>
-</head>
-<body>
-
-<header>
-
-<div class="logo">
-Download Hub
-</div>
-
-<input
-class="search"
-id="search"
-placeholder="Search files..."
-onkeyup="searchFiles()"
-/>
-
-</header>
-
-
-<!-- TOP 728x90 -->
-
-<div class="ad-box">
-
-<script>
-atOptions={
-'key':'442144ea6b334db8968335d84fad9e67',
-'format':'iframe',
-'height':90,
-'width':728,
-'params':{}
-};
-</script>
-
-<script src="https://www.highperformanceformat.com/442144ea6b334db8968335d84fad9e67/invoke.js"></script>
-
-</div>
-
-
-<div
-class="grid"
-id="container">
-</div>
-
-
-
-<div
-id="loginBox"
-class="admin">
-
-<h2>Admin Login</h2>
-
-<input
-type="password"
-id="adminPass"
-placeholder="Password"
-/>
-
-<button
-class="btn"
-onclick="login()">
-
-Login
-
-</button>
-
-</div>
-
-
-
-<div
-class="admin"
-id="adminPanel"
-style="display:none">
-
-<h2>
-Admin Upload
-</h2>
-
-<input
-id="name"
-placeholder="Title">
-
-<textarea
-id="desc"
-placeholder="Description">
-</textarea>
-
-<input
-id="category"
-placeholder="PDF / APK / ZIP">
-
-<input
-id="image"
-placeholder="Thumbnail URL">
-
-<input
-id="link"
-placeholder="Google Drive Link">
-
-<button
-class="btn"
-onclick="addFile()">
-
-Add File
-
-</button>
-
-<button
-class="btn"
-onclick="logout()">
-
-Logout
-
-</button>
-
-</div>
-
-
-
-<!-- NATIVE 2:2 -->
-
-<div class="ad-box">
-
-<script async="async"
-data-cfasync="false"
-src="https://pl29538097.effectivecpmnetwork.com/17fcfae12b288e2760c37dd3c08d066b/invoke.js">
-</script>
-
-<div id="container-17fcfae12b288e2760c37dd3c08d066b"></div>
-
-</div>
-
-
-
-<!-- SOCIAL BAR -->
-
-<script src="https://pl29538096.effectivecpmnetwork.com/2b/8e/84/2b8e842fc7172c9c6e9453d58fd9a098.js"></script>
-
-
-<!-- POPUNDER -->
-
-<script src="https://pl29538098.effectivecpmnetwork.com/4a/18/53/4a1853f5ac193d9c4e94aa57aa940207.js"></script>
-
-
-
-<!-- MOBILE STICKY -->
-
-<div class="mobileSticky">
-
-<script>
-atOptions={
-'key':'e1f5d78d388fef7be41527447a14b4c9',
-'format':'iframe',
-'height':50,
-'width':320,
-'params':{}
-};
-</script>
-
-<script src="https://www.highperformanceformat.com/e1f5d78d388fef7be41527447a14b4c9/invoke.js"></script>
-
-</div>
-
-
-<script>
-
-const ADMIN_PASSWORD="jaya@2911";
-
-const SUPABASE_URL=
-"https://moejfbsshjwlqxocxmkb.supabase.co";
-
-const SUPABASE_KEY=
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vZWpmYnNzaGp3bHF4b2N4bWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2NzM4OTUsImV4cCI6MjA5NTI0OTg5NX0.wwWQiyKbi-V2i1S3GBkwdhSToDhZ1kis0l4BTdS2tsA";
-
-
-const supabase=
-
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
-
-
-const container=
-document.getElementById(
-"container"
-);
-
-
-let files=[];
-
-
-
-function convertDrive(url){
-
-let id=
-url.match(
-/[-\w]{25,}/
-);
-
-if(id){
-
-return `https://drive.google.com/uc?export=download&id=${id[0]}`;
-
-}
-
-return url;
-
-}
-
-
-
-function convertImage(url){
-
-let id=
-url.match(
-/[-\w]{25,}/
-);
-
-if(id){
-
-return `https://drive.google.com/thumbnail?id=${id[0]}&sz=w1000`;
-
-}
-
-return url;
-
-}
-
-
-
-async function loadFiles(){
-
-const {data,error}=
-
-await supabase
-.from(
-"downloads"
-)
-.select("*");
-
-
-if(error){
-
-console.log(error);
-
-return;
-
-}
-
-
-files=data;
-
-render();
-
-}
-
-
-
-function render(){
-
-let html="";
-
-
-const isAdmin=
-
-localStorage.getItem(
-"admin"
-)==="true";
-
-
-
-files.forEach(
-(file)=>{
-
-html+=`
-
-<div class="card">
-
-<img
-src="${file.image || 'https://picsum.photos/500'}"
-
-onerror="
-this.src='https://picsum.photos/500'
-"
->
-
-<div class="category">
-
-${file.category || "Unknown"}
-
-</div>
-
-
-<div class="title">
-
-${file.name || "Untitled"}
-
-</div>
-
-
-<div class="desc">
-
-${file.desc || "No description"}
-
-</div>
-
-
-<a
-href="${file.link}"
-target="_blank">
-
-<button class="btn">
-
-Download
-
-</button>
-
-</a>
-
-
-${isAdmin ?
-
-`<button
-class="btn deleteBtn"
-onclick="deleteFile(${file.id})">
-
-Delete
-
-</button>`
-
-:""}
-
-
-</div>
-
-`;
-
-});
-
-
-container.innerHTML=
-html;
-
-}
-
-
-
-async function addFile(){
-
-
-const title=
-name.value.trim();
-
-const description=
-desc.value.trim();
-
-const fileCategory=
-category.value.trim();
-
-const thumbnail=
-image.value.trim();
-
-const fileLink=
-link.value.trim();
-
-
-
-if(
-
-!title ||
-
-!description ||
-
-!fileCategory ||
-
-!fileLink
-
-){
-
-alert(
-"Please fill all fields"
-);
-
-return;
-
-}
-
-
-
-const {error}=
-
-await supabase
-.from(
-"downloads"
-)
-.insert([{
-
-name:title,
-
-desc:description,
-
-category:fileCategory,
-
-image:
-convertImage(
-thumbnail
-),
-
-link:
-convertDrive(
-fileLink
-)
-
-}]);
-
-
-if(error){
-
-alert(
-"Upload failed"
-);
-
-console.log(
-error
-);
-
-return;
-
-}
-
-
-
-loadFiles();
-
-
-document
-.querySelectorAll(
-".admin input,.admin textarea"
-)
-.forEach(
-x=>x.value=""
-);
-
-
-}
-
-
-
-
-async function deleteFile(id){
-
-if(
-confirm(
-"Delete file?"
-)
-){
-
-await supabase
-.from(
-"downloads"
-)
-.delete()
-.eq(
-"id",
-id
-);
-
-
-loadFiles();
-
-}
-
-}
-
-
-
-
-function login(){
-
-if(
-adminPass.value
-===ADMIN_PASSWORD
-){
-
-localStorage.setItem(
-"admin",
-"true"
-);
-
-showAdmin();
-
-}
-
-else{
-
-alert(
-"Wrong password"
-);
-
-}
-
-}
-
-
-
-function showAdmin(){
-
-loginBox.style.display=
-"none";
-
-adminPanel.style.display=
-"block";
-
-render();
-
-}
-
-
-
-function logout(){
-
-localStorage.removeItem(
-"admin"
-);
-
-location.reload();
-
-}
-
-
-
-if(
-localStorage.getItem(
-"admin"
-)==="true"
-){
-
-showAdmin();
-
-}
-
-
-
-function searchFiles(){
-
-let value=
-
-search.value
-.toLowerCase();
-
-
-document
-.querySelectorAll(
-".card"
-)
-.forEach(card=>{
-
-card.style.display=
-
-card.innerText
-.toLowerCase()
-.includes(
-value
-)
-
-?
-
-"block"
-
-:
-
-"none";
-
-});
-
-}
-
-
-
-loadFiles();
-
-</script>
-
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#090b10">
+    <meta name="description" content="A responsive cloud synced download hub powered by Supabase.">
+    <title>Download Hub</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://picsum.photos">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <noscript>This download hub needs JavaScript enabled to load files.</noscript>
+
+    <header class="site-header">
+      <nav class="nav-shell" aria-label="Primary navigation">
+        <a class="brand" href="#home" aria-label="Download Hub home">
+          <span class="brand-mark">DH</span>
+          <span>
+            <strong>Download Hub</strong>
+            <small>Cloud synced files</small>
+          </span>
+        </a>
+
+        <div class="header-tools">
+          <label class="search-box" for="searchInput">
+            <span aria-hidden="true">Search</span>
+            <input id="searchInput" type="search" placeholder="Search files..." autocomplete="off">
+          </label>
+          <select id="categoryFilter" class="category-filter" aria-label="Filter by category">
+            <option value="all">All categories</option>
+          </select>
+        </div>
+
+        <div class="nav-actions">
+          <a class="ghost-link" href="#home">Files</a>
+          <a class="ghost-link" href="#admin" id="adminNavLink">Admin</a>
+          <button class="ghost-button hidden" id="logoutButton" type="button">Logout</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="ad-band ad-top" aria-label="Advertisement">
+        <div class="ad-frame ad-frame-top">
+          <script>
+            atOptions = {
+              'key': '442144ea6b334db8968335d84fad9e67',
+              'format': 'iframe',
+              'height': 90,
+              'width': 728,
+              'params': {}
+            };
+          </script>
+          <script src="https://www.highperformanceformat.com/442144ea6b334db8968335d84fad9e67/invoke.js"></script>
+        </div>
+      </section>
+
+      <section class="admin-section hidden" id="adminPanel" aria-labelledby="adminPanelTitle">
+        <div class="section-heading">
+          <p class="eyebrow">Admin tools</p>
+          <h2 id="adminPanelTitle">Upload a new file</h2>
+        </div>
+
+        <form class="admin-form" id="downloadForm" novalidate>
+          <div class="form-grid">
+            <label>
+              <span>Title</span>
+              <input name="name" type="text" maxlength="120" required placeholder="Example: Class 10 Notes">
+            </label>
+            <label>
+              <span>Category</span>
+              <select name="category" required>
+                <option value="">Select category</option>
+                <option>PDF</option>
+                <option>ZIP</option>
+                <option>APK</option>
+                <option>Images</option>
+                <option>Notes</option>
+                <option>Software</option>
+                <option>Other files</option>
+              </select>
+            </label>
+            <label class="wide-field">
+              <span>Description</span>
+              <textarea name="description" rows="3" maxlength="280" required placeholder="Short helpful description"></textarea>
+            </label>
+            <label>
+              <span>Thumbnail URL</span>
+              <input name="thumbnail" type="url" required placeholder="Google Drive thumbnail link or direct thumbnail URL">
+            </label>
+            <label>
+              <span>Download URL</span>
+              <input name="file_link" type="url" required placeholder="Google Drive file sharing link">
+            </label>
+          </div>
+          <button class="primary-button" id="submitButton" type="submit">Add file</button>
+        </form>
+      </section>
+
+      <section class="admin-login-section hidden" id="adminLogin" aria-labelledby="adminLoginTitle">
+        <form class="login-panel" id="loginForm">
+          <p class="eyebrow">Private access</p>
+          <h2 id="adminLoginTitle">Admin login</h2>
+          <label>
+            <span>Password</span>
+            <input id="passwordInput" type="password" autocomplete="current-password" required placeholder="Enter admin password">
+          </label>
+          <button class="primary-button" type="submit">Login</button>
+        </form>
+      </section>
+
+      <section class="content-section" aria-live="polite">
+        <div class="section-heading files-heading">
+          <div>
+            <p class="eyebrow">Downloads</p>
+            <h2>Available files</h2>
+          </div>
+          <button class="ghost-button" id="refreshButton" type="button">Refresh</button>
+        </div>
+
+        <div class="status-banner" id="statusBanner" role="status"></div>
+
+        <div class="loading-state" id="loadingState">
+          <span class="loader"></span>
+          <span>Loading downloads...</span>
+        </div>
+
+        <div class="cards-grid" id="cardsGrid"></div>
+
+        <div class="empty-state hidden" id="emptyState">
+          <h3>No files found</h3>
+          <p>Add files from the admin panel or try a different search.</p>
+        </div>
+
+        <div class="ad-band ad-native-main" aria-label="Sponsored content">
+          <div class="native-main-shell">
+            <script async data-cfasync="false"
+              src="https://pl29538097.effectivecpmnetwork.com/17fcfae12b288e2760c37dd3c08d066b/invoke.js">
+            </script>
+            <div id="container-17fcfae12b288e2760c37dd3c08d066b"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="mobile-sticky-ad" aria-label="Mobile advertisement">
+      <div class="mobile-ad-inner">
+        <script>
+          atOptions = {
+            'key': 'e1f5d78d388fef7be41527447a14b4c9',
+            'format': 'iframe',
+            'height': 50,
+            'width': 320,
+            'params': {}
+          };
+        </script>
+        <script src="https://www.highperformanceformat.com/e1f5d78d388fef7be41527447a14b4c9/invoke.js"></script>
+      </div>
+    </aside>
+
+    <script src="https://pl29538096.effectivecpmnetwork.com/2b/8e/84/2b8e842fc7172c9c6e9453d58fd9a098.js"></script>
+    <script src="https://pl29538098.effectivecpmnetwork.com/4a/18/53/4a1853f5ac193d9c4e94aa57aa940207.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
