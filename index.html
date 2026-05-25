@@ -324,17 +324,28 @@ atOptions={
 
 const ADMIN_PASSWORD="jaya@2911";
 
+const SUPABASE_URL=
+"https://moejfbsshjwlqxocxmkb.supabase.co";
+
+const SUPABASE_KEY=
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vZWpmYnNzaGp3bHF4b2N4bWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2NzM4OTUsImV4cCI6MjA5NTI0OTg5NX0.wwWQiyKbi-V2i1S3GBkwdhSToDhZ1kis0l4BTdS2tsA";
+
+
+const supabase=
+
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
 const container=
 document.getElementById(
 "container"
 );
 
-let files=
-JSON.parse(
-localStorage.getItem(
-"files"
-)
-)||[];
+
+let files=[];
 
 
 
@@ -376,10 +387,38 @@ return url;
 
 
 
+async function loadFiles(){
+
+const {data,error}=
+
+await supabase
+.from(
+"downloads"
+)
+.select("*");
+
+
+if(error){
+
+console.log(error);
+
+return;
+
+}
+
+
+files=data;
+
+render();
+
+}
+
+
 
 function render(){
 
 let html="";
+
 
 const isAdmin=
 
@@ -388,8 +427,9 @@ localStorage.getItem(
 )==="true";
 
 
+
 files.forEach(
-(file,index)=>{
+(file)=>{
 
 html+=`
 
@@ -409,17 +449,20 @@ ${file.category || "Unknown"}
 
 </div>
 
+
 <div class="title">
 
 ${file.name || "Untitled"}
 
 </div>
 
+
 <div class="desc">
 
 ${file.desc || "No description"}
 
 </div>
+
 
 <a
 href="${file.link}"
@@ -438,7 +481,7 @@ ${isAdmin ?
 
 `<button
 class="btn deleteBtn"
-onclick="deleteFile(${index})">
+onclick="deleteFile(${file.id})">
 
 Delete
 
@@ -451,86 +494,33 @@ Delete
 
 `;
 
-
-if((index+1)%6===0){
-
-html+=`
-
-<div class="ad-box">
-
-Advertisement
-
-</div>
-
-`;
-
-}
-
 });
 
 
-container.innerHTML=html;
+container.innerHTML=
+html;
 
 }
 
 
 
-render();
-
-
-
-
-function addFile(){
+async function addFile(){
 
 
 const title=
-
-document
-.getElementById(
-"name"
-)
-.value
-.trim();
-
+name.value.trim();
 
 const description=
-
-document
-.getElementById(
-"desc"
-)
-.value
-.trim();
-
+desc.value.trim();
 
 const fileCategory=
-
-document
-.getElementById(
-"category"
-)
-.value
-.trim();
-
+category.value.trim();
 
 const thumbnail=
-
-document
-.getElementById(
-"image"
-)
-.value
-.trim();
-
+image.value.trim();
 
 const fileLink=
-
-document
-.getElementById(
-"link"
-)
-.value
-.trim();
+link.value.trim();
 
 
 
@@ -556,7 +546,13 @@ return;
 
 
 
-let obj={
+const {error}=
+
+await supabase
+.from(
+"downloads"
+)
+.insert([{
 
 name:title,
 
@@ -574,30 +570,26 @@ convertDrive(
 fileLink
 )
 
-};
+}]);
 
 
+if(error){
 
-files.push(
-obj
+alert(
+"Upload failed"
 );
 
-
-
-localStorage.setItem(
-
-"files",
-
-JSON.stringify(
-files
-)
-
+console.log(
+error
 );
 
+return;
+
+}
 
 
-render();
 
+loadFiles();
 
 
 document
@@ -614,33 +606,26 @@ x=>x.value=""
 
 
 
-
-function deleteFile(index){
+async function deleteFile(id){
 
 if(
-
 confirm(
 "Delete file?"
 )
-
 ){
 
-files.splice(
-index,
-1
-);
-
-localStorage.setItem(
-
-"files",
-
-JSON.stringify(
-files
+await supabase
+.from(
+"downloads"
 )
-
+.delete()
+.eq(
+"id",
+id
 );
 
-render();
+
+loadFiles();
 
 }
 
@@ -652,10 +637,8 @@ render();
 function login(){
 
 if(
-
 adminPass.value
 ===ADMIN_PASSWORD
-
 ){
 
 localStorage.setItem(
@@ -706,11 +689,9 @@ location.reload();
 
 
 if(
-
 localStorage.getItem(
 "admin"
 )==="true"
-
 ){
 
 showAdmin();
@@ -752,6 +733,10 @@ value
 });
 
 }
+
+
+
+loadFiles();
 
 </script>
 
